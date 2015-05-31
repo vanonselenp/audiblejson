@@ -11,7 +11,7 @@ def create_title(element):
     result = {}
     for item in element.items():
         if item[0] == 'href':
-            result['link'] = item[1].lstrip('\n')
+            result['link'] = "http://www.audible.com%s" % item[1].lstrip('\n')
         elif item[0] == 'alt':
             result['title'] = item[1]
     return result
