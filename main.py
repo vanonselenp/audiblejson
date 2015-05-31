@@ -15,19 +15,23 @@ def create_title(element):
             result['link'] = "http://www.audible.com%s" % item[1].lstrip('\n')
         elif item[0] == 'alt':
             result['title'] = item[1]
+            print item[1]
     return result
 
 
 def create_metadata(element):
     result = {}
-    #rating = element.find_class('boldrating').text
-    #result['rating'] = rating
+    rating = element.find_class('boldrating')
+    if len(rating) > 0:
+        result['rating'] = rating[0].text.rstrip('\n\t                        ').lstrip('\n\t                            ')
+    else:
+        result['rating'] = 'Not Yet Rated'
     links = element.find_class('adbl-link')
     result['author'] = links[0].text
     result['narrator'] = links[1].text
     #result['series'] = [l.text for l in element.find_class('adbl-series-link')[0].find_class('adbl-link')]
-    #result['length'] = element[4].getchildren()[1].text
-    #result['release'] = element[5].getchildren()[1].text
+    result['length'] = element[-3].getchildren()[1].text
+    result['release'] = element[-2].getchildren()[1].text
     return result
 
 
