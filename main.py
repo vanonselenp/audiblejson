@@ -17,6 +17,13 @@ def create_title(element):
     return result
 
 
+def create_metadata(element):
+    result = {}
+    rating = element.find_class('boldrating')[0].text.rstrip('\n\t                        ').lstrip('\n\t                            ')
+    result['rating'] = rating
+    return result
+
+
 def get_book_elements(entry):
     output = []
     for element in entry.getchildren():
@@ -34,8 +41,10 @@ def get_titles_dict(tree):
         book = {}
         elements = get_book_elements(entry)
         for element in elements:
-            if element.tag  == 'a':
+            if element.tag == 'a':
                 book.update(create_title(element))
+            if element.tag == 'ul':
+                book.update(create_metadata(element))
         result.append(book)
     return result
 
