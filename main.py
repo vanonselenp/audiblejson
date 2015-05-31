@@ -1,8 +1,9 @@
 from lxml import html
 import requests
 
-def get_tree():
-    page = requests.get('http://www.audible.com/search/ref=a_search_c4_1_1_1_srAuth?searchAuthor=The+Great+Courses&qid=1433065261&sr=1-1&searchSize=404')
+
+def get_tree(url='http://www.audible.com/search/ref=a_search_c4_1_1_1_srAuth?searchAuthor=The+Great+Courses&qid=1433065261&sr=1-1&searchSize=404'):
+    page = requests.get(url)
     text = page.text
     return html.fromstring(text) 
 
@@ -19,14 +20,14 @@ def create_title(element):
 
 def create_metadata(element):
     result = {}
-    rating = element.find_class('boldrating')[0].text.rstrip('\n\t                        ').lstrip('\n\t                            ')
-    result['rating'] = rating
+    #rating = element.find_class('boldrating').text
+    #result['rating'] = rating
     links = element.find_class('adbl-link')
     result['author'] = links[0].text
     result['narrator'] = links[1].text
-    result['series'] = [l.text for l in element.find_class('adbl-series-link')[0].find_class('adbl-link')]
-    result['length'] = element[4].getchildren()[1].text
-    result['release'] = element[5].getchildren()[1].text
+    #result['series'] = [l.text for l in element.find_class('adbl-series-link')[0].find_class('adbl-link')]
+    #result['length'] = element[4].getchildren()[1].text
+    #result['release'] = element[5].getchildren()[1].text
     return result
 
 
@@ -57,8 +58,18 @@ def get_titles_dict(tree):
 
 def run():
     tree = get_tree()
-    return get_titles_dict(tree)
-
+    next = tree.find_class('adbl-page-next')[0]
+    result = get_titles_dict(tree)
+    while next is not None:
+        url = next.getchildren()[0].get('href')
+        if url is None:
+            return result
+        print url
+        tree = get_tree('http://www.audible.com%s' % url)
+        next = tree.find_class('adbl-page-next')[0]
+        result.extend(get_titles_dict(tree))
+    return result
+    
 
 if __name__ == '__main__':
     run()
