@@ -21,6 +21,12 @@ def create_metadata(element):
     result = {}
     rating = element.find_class('boldrating')[0].text.rstrip('\n\t                        ').lstrip('\n\t                            ')
     result['rating'] = rating
+    links = element.find_class('adbl-link')
+    result['author'] = links[0].text
+    result['narrator'] = links[1].text
+    result['series'] = [l.text for l in element.find_class('adbl-series-link')[0].find_class('adbl-link')]
+    result['length'] = element[4].getchildren()[1].text
+    result['release'] = element[5].getchildren()[1].text
     return result
 
 
