@@ -6,26 +6,44 @@ def get_tree():
     text = page.text
     return html.fromstring(text) 
 
-def title_from_entry(entry):
-    children = entry.getchildren()
-    for c in children:
-        if len(c.items()) > 0 and c.items()[0][1] == 'adbl-prod-title':
-            return c.getchildren()[0].text
-    return ""
+
+def create_title(element):
+    result = {}
+    for item in element.items():
+        if item[0] == 'href':
+            result['link'] = item[1].lstrip('\n')
+        elif item[0] == 'alt':
+            result['title'] = item[1]
+    return result
+
+
+def get_book_elements(entry):
+    output = []
+    for element in entry.getchildren():
+        children = element.getchildren()
+        if len(children) > 0:
+            output.extend(children)
+    return output[:-1]
+
 
 def get_titles_dict(tree):
-    entry = tree.xpath('//div[@class="adbl-prod-meta-data-cont"]')
+    entries = tree.xpath('//div[@class="adbl-prod-meta-data-cont"]')
     result = []
-    for e in entry:
-        d = dict() 
-        d['title'] = title_from_entry(e)
-        result.append(d)
-    return result 
-                
+
+    for entry in entries:
+        book = {}
+        elements = get_book_elements(entry)
+        for element in elements:
+            if element.tag  == 'a':
+                book.update(create_title(element))
+        result.append(book)
+    return result
+
 
 def run():
     tree = get_tree()
     return get_titles_dict(tree)
+
 
 if __name__ == '__main__':
     run()
