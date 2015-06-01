@@ -15,7 +15,6 @@ def create_title(element):
             result['link'] = "http://www.audible.com%s" % item[1].lstrip('\n')
         elif item[0] == 'alt':
             result['title'] = item[1]
-            print item[1]
     return result
 
 
@@ -70,7 +69,6 @@ def run():
         url = next.getchildren()[0].get('href')
         if url is None:
             return result
-        print url
         tree = get_tree('http://www.audible.com%s' % url)
         next = tree.find_class('adbl-page-next')[0]
         result.extend(get_titles_dict(tree))
