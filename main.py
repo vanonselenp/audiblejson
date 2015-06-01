@@ -29,7 +29,9 @@ def create_metadata(element):
     links = element.find_class('adbl-link')
     result['author'] = links[0].text
     result['narrator'] = links[1].text
-    #result['series'] = [l.text for l in element.find_class('adbl-series-link')[0].find_class('adbl-link')]
+    series = element.find_class('adbl-series-link')
+    if len(series) > 0:
+        result['series'] = [l.text for l in element.find_class('adbl-series-link')[0].find_class('adbl-link')]
     result['length'] = element[-3].getchildren()[1].text
     result['release'] = element[-2].getchildren()[1].text
     return result
