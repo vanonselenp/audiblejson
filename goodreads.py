@@ -62,8 +62,6 @@ def load_and_sort(filename):
     print(json.dumps(data))
 
 if __name__ == "__main__":
-    print(sys.argv)
-
     try:
         command = sys.argv[1]
     except:
@@ -88,7 +86,7 @@ if __name__ == "__main__":
             filename = sys.argv[2]
         except:
             filename = 'books.json'
-            
+
         load_and_sort(filename)
         exit(0)
 
